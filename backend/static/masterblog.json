@@ -1,0 +1,160 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "Masterblog API",
+    "version": "1.0.0"
+  },
+  "servers": [
+    { "url": "http://localhost:5002" }
+  ],
+  "tags": [
+    {
+      "name": "Post",
+      "description": "Post API - CRUD"
+    }
+  ],
+  "paths": {
+    "/api/posts": {
+      "get": {
+        "summary": "Returns all posts",
+        "description": "Retrieve a list of all blog posts.",
+        "tags": ["Post"],
+        "produces": ["application/json"],
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          }
+        }
+      },
+      "post": {
+        "summary": "Create a new post",
+        "description": "Add a new blog post by providing a JSON body with title and content.",
+        "tags": ["Post"],
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Post object that needs to be added",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "title": {
+                  "type": "string"
+                },
+                "content": {
+                  "type": "string"
+                }
+              },
+              "required": ["title", "content"]
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Post created"
+          },
+          "400": {
+            "description": "Missing title or content"
+          }
+        }
+      }
+    },
+    "/api/posts/{post_id}": {
+      "delete": {
+        "summary": "Delete a post",
+        "description": "Delete an existing blog post by its ID.",
+        "tags": ["Post"],
+        "parameters": [
+          {
+            "name": "post_id",
+            "in": "path",
+            "description": "ID of the post to delete",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Post deleted successfully"
+          },
+          "404": {
+            "description": "Post not found"
+          }
+        }
+      },
+      "put": {
+        "summary": "Update a post",
+        "description": "Update the title and/or content of a blog post by its ID.",
+        "tags": ["Post"],
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "name": "post_id",
+            "in": "path",
+            "description": "ID of the post to update",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Post object with updated values",
+            "required": false,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "title": {
+                  "type": "string"
+                },
+                "content": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Post updated"
+          },
+          "404": {
+            "description": "Post not found"
+          }
+        }
+      }
+    },
+    "/api/posts/search": {
+      "get": {
+        "summary": "Search posts",
+        "description": "Search for posts by title and/or content.",
+        "tags": ["Post"],
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "name": "title",
+            "in": "query",
+            "description": "Text to search in the post titles",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "content",
+            "in": "query",
+            "description": "Text to search in the post content",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Search results returned successfully"
+          }
+        }
+      }
+    }
+  }
+}
