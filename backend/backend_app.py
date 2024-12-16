@@ -13,10 +13,31 @@ POSTS = [
 @app.route('/api/posts', methods=['GET'])
 def get_posts():
     """
-    Get all blog posts in a simple JSON list.
-    Friendly reminder: this just returns all current posts.
+    Get all blog posts, optionally sorted by title or content.
+    Query parameters:
+      - sort: field to sort by ('title' or 'content')
+      - direction: 'asc' or 'desc' for sorting order
+    If no parameters provided, returns posts in their original order.
     """
-    return jsonify(POSTS)
+    sort_field = request.args.get('sort', None)
+    sort_direction = request.args.get('direction', None)
+
+    result_posts = POSTS[:]
+
+    if sort_field:
+        if sort_field not in ["title", "content"]:
+            return jsonify({"error": "Invalid sort field. Use 'title' or 'content'."}), 400
+
+        reverse_sort = False
+        if sort_direction:
+            if sort_direction == "desc":
+                reverse_sort = True
+            elif sort_direction != "asc":
+                return jsonify({"error": "Invalid direction. Use 'asc' or 'desc'."}), 400
+
+        result_posts = sorted(result_posts, key=lambda post: post[sort_field], reverse=reverse_sort)
+
+    return jsonify(result_posts)
 
 
 @app.route('/api/posts', methods=['POST'])
