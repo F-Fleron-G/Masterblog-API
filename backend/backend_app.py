@@ -12,11 +12,19 @@ POSTS = [
 
 @app.route('/api/posts', methods=['GET'])
 def get_posts():
+    """
+    Get all blog posts in a simple JSON list.
+    Friendly reminder: this just returns all current posts.
+    """
     return jsonify(POSTS)
 
 
 @app.route('/api/posts', methods=['POST'])
 def create_post():
+    """
+    Create a new blog post.
+    Send a JSON body with 'title' and 'content' to add it to our list.
+    """
     data = request.get_json()
     if data is None:
         return jsonify({"error": "Invalid request. JSON data is required."}), 400
@@ -47,12 +55,43 @@ def create_post():
 
 @app.route('/api/posts/<int:post_id>', methods=['DELETE'])
 def delete_post(post_id):
+    """
+    Delete a blog post by its ID.
+    If found, the post is removed and a success message is returned.
+    Otherwise, a 404 error is returned.
+    """
     for i, post in enumerate(POSTS):
         if post['id'] == post_id:
             del POSTS[i]
             return jsonify({
                 "message": f"Post with id {post_id} has been deleted successfully."
             }), 200
+
+    return jsonify({"error": "Post not found"}), 404
+
+
+@app.route('/api/posts/<int:post_id>', methods=['PUT'])
+def update_post(post_id):
+    """
+    Update an existing blog post by its ID.
+    Provide 'title' and/or 'content' in JSON to change the post.
+    If not found, returns a 404 error.
+    """
+    data = request.get_json()
+    if data is None:
+        data = {}
+
+    title = data.get("title", None)
+    content = data.get("content", None)
+
+    for post in POSTS:
+        if post["id"] == post_id:
+            if title is not None:
+                post["title"] = title
+            if content is not None:
+                post["content"] = content
+
+            return jsonify(post), 200
 
     return jsonify({"error": "Post not found"}), 404
 
